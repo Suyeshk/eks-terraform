@@ -12,7 +12,7 @@ private_subnet_ids = [
 cluster_role_arn = "arn:aws:iam::140191459435:role/eks-cluster-role"
 node_role_arn    = "arn:aws:iam::140191459435:role/eks-node-role"
 
-instance_types = ["t3.medium"]
+instance_types = ["t3.micro"]
 
 desired_size = 1
 min_size     = 1
