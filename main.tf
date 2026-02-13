@@ -33,6 +33,8 @@ resource "aws_eks_cluster" "demo" {
 
   vpc_config {
     subnet_ids = var.private_subnet_ids
+ security_group_ids = [aws_security_group.eks_cluster_sg.id]
+  endpoint_public_access = true
   }
 
   tags = {
@@ -68,3 +70,51 @@ resource "aws_eks_node_group" "demo" {
     Environment = terraform.workspace
   }
 }
+
+resource "aws_security_group" "eks_cluster_sg" {
+  name   = "${var.cluster_name}-cluster-sg"
+  vpc_id = var.vpc_id
+
+  ingress {
+    description = "Allow worker nodes to communicate with control plane"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # For testing only
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+resource "aws_security_group" "eks_node_sg" {
+  name   = "${var.cluster_name}-node-sg"
+  vpc_id = var.vpc_id
+
+  ingress {
+    description = "Allow node to node communication"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    self        = true
+  }
+
+  ingress {
+    description     = "Allow control plane to talk to nodes"
+    from_port       = 1025
+    to_port         = 65535
+    protocol        = "tcp"
+    security_groups = [aws_security_group.eks_cluster_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
