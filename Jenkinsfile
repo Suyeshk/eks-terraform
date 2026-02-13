@@ -21,6 +21,11 @@ pipeline {
                 checkout scm
             }
         }
+        stage('Check Jenkins AWS Account') {
+    steps {
+        sh 'aws sts get-caller-identity'
+    }
+}
 
         stage('Terraform Init') {
             when {
