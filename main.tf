@@ -58,7 +58,7 @@ resource "aws_eks_node_group" "demo" {
     max_size     = var.max_size
   }
 
-  capacity_type = "SPOT"
+  capacity_type = "ON_DEMAND"
 
   depends_on = [
     aws_eks_cluster.demo
