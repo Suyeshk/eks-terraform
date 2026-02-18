@@ -9,7 +9,7 @@ pipeline {
         )
         choice(
             name: 'ACTION',
-            choices: ['init', 'plan', 'apply'],
+            choices: ['init', 'plan', 'apply', 'destroy'],
             description: 'Terraform action'
         )
     }
@@ -66,5 +66,18 @@ pipeline {
                 '''
             }
         }
+
+        stage ('Terraform Destroy'){
+                        when {
+                expression { params.ACTION == 'destroy' }
+                        }
+            steps{
+                sh '''
+                            terraform init 
+                            terraform destroy
+                           -var-file=config/${ENV}.tfvars \
+                            -auto-approve
+                            '''
+            
     }
 }
