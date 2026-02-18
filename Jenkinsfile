@@ -74,7 +74,9 @@ pipeline {
             steps{
                 sh '''
                             terraform init 
-                            terraform destroy
+
+                                      terraform destroy \
+            -var-file=config/${ENV}.tfvars \
                             -auto-approve
                             '''
             
